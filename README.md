@@ -1,1 +1,135 @@
 # prediction-game
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Game Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <h2>Color Prediction Simulator</h2>
+        <div class="wallet-box">
+            Balance: ₹<span id="balance">1000</span>
+        </div>
+
+        <div class="display-box">
+            <div id="countdown">01:30</div>
+            <div id="result-display">?</div>
+        </div>
+
+        <div class="bet-buttons">
+            <button class="btn green" onclick="placeBet('Green')">Join Green</button>
+            <button class="btn violet" onclick="placeBet('Violet')">Join Violet</button>
+            <button class="btn red" onclick="placeBet('Red')">Join Red</button>
+        </div>
+
+        <div class="input-box">
+            <input type="number" id="bet-amount" placeholder="Enter Bet Amount" min="10">
+        </div>
+
+        <div id="log-box"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+body {
+    background-color: #1a1a1a;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+.app-container {
+    width: 100%;
+    max-width: 400px;
+    background: #2a2a2a;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+}
+.wallet-box {
+    background: #333;
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.display-box {
+    background: #000;
+    height: 100px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+#countdown { color: #ff9800; font-size: 20px; }
+#result-display { font-size: 40px; margin-top: 10px; }
+.bet-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.btn {
+    border: none;
+    padding: 12px 20px;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 30%;
+}
+.green { background: #4caf50; }
+.violet { background: #9c27b0; }
+.red { background: #f44336; }
+input {
+    width: 90%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 15px;
+}
+#log-box {
+    background: #111;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #ffc107;
+}
+let balance = 1000;
+let turnCount = 0;
+
+function placeBet(color) {
+    let amountInput = document.getElementById('bet-amount').value;
+    let amount = parseInt(amountInput);
+
+    if (isNaN(amount) || amount <= 0 || amount > balance) {
+        alert("Invalid bet amount!");
+        return;
+    }
+
+    turnCount++;
+    balance -= amount;
+    document.getElementById('balance').innerText = balance;
+
+    // Simulation/Game logic
+    setTimeout(() => {
+        let finalColor;
+        
+        // Rigged Logic Example (Wins first 2 times, then loses)
+        if (turnCount <= 2) {
+            finalColor = color; 
+            balance += (amount * 2);
+            document.getElementById('log-box').innerText = `Turn ${turnCount}: You Won! Balance updated.`;
+        } else {
+            finalColor = color === 'Red' ? 'Green' : 'Red';
+            document.getElementById('log-box').innerText = `Turn ${turnCount}: You Lost! The system shifted the outcome.`;
+        }
+
+        document.getElementById('result-display').innerText = finalColor;
+        document.getElementById('result-display').style.color = finalColor === 'Red' ? '#f44336' : '#4caf50';
+        document.getElementById('balance').innerText = balance;
+    }, 1000);
+}
